@@ -1,20 +1,144 @@
+x-rabbitmq-env: &rabbitmq-env
+  SPRING_RABBITMQ_HOST: rabbitmq
+  SPRING_RABBITMQ_PORT: 5672
+  SPRING_RABBITMQ_USERNAME: guest
+  SPRING_RABBITMQ_PASSWORD: guest
+
 services:
+
   postgres:
-    image: 'postgres:latest'
-    environment:
-      - 'POSTGRES_DB=mydatabase'
-      - 'POSTGRES_PASSWORD=secret'
-      - 'POSTGRES_USER=myuser'
+    image: 'postgres:16-alpine'
+    container_name: eventflow-db
+    restart: always
+    env_file:
+      - .env
+    networks:
+      - eventflow-network
     ports:
-      - '5432'
+      - '5433:5432'
+    environment:
+      - TZ=America/Sao_Paulo
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./init-databases.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_USERNAME}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
   rabbitmq:
-    image: 'rabbitmq:latest'
+    image: 'rabbitmq:3-management-alpine'
+    container_name: eventflow-rabbitmq
+    restart: always
+    networks:
+      - eventflow-network
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: [ "CMD", "rabbitmq-diagnostics", "-q", "ping" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  order-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE_NAME: order-service
+    container_name: eventflow-order-service
+    restart: unless-stopped
+    networks:
+      - eventflow-network
+    ports:
+      - "8081:8080"
     environment:
-      - 'RABBITMQ_DEFAULT_PASS=secret'
-      - 'RABBITMQ_DEFAULT_USER=myuser'
+      <<: *rabbitmq-env
+      SPRING_DATASOURCE_URL: ${DB_ORDER}
+      SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  payment-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE_NAME: payment-service
+    container_name: eventflow-payment-service
+    restart: unless-stopped
+    networks:
+      - eventflow-network
     ports:
-      - '5672'
-  redis:
-    image: 'redis:latest'
+      - "8082:8080"
+    environment:
+      <<: *rabbitmq-env
+      SPRING_DATASOURCE_URL: ${DB_PAYMENT}
+      SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  inventory-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE_NAME: inventory-service
+    container_name: eventflow-inventory-service
+    restart: unless-stopped
+    networks:
+      - eventflow-network
     ports:
-      - '6379'
+      - "8083:8080"
+    environment:
+      <<: *rabbitmq-env
+      SPRING_DATASOURCE_URL: ${DB_INVENTORY}
+      SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  notification-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE_NAME: notification-service
+    container_name: eventflow-notification-service
+    restart: unless-stopped
+    networks:
+      - eventflow-network
+    ports:
+      - "8084:8080"
+    environment:
+      <<: *rabbitmq-env
+      SPRING_DATASOURCE_URL: ${DB_NOTIFICATION}
+      SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+networks:
+  eventflow-network:
+    driver: bridge
+
+volumes:
+  postgres-data:
