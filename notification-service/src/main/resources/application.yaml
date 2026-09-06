@@ -1,10 +1,10 @@
 spring:
   application:
-    name: payment-service
+    name: notification-service
 
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: ${DB_PAYMENT}
+    url: ${DB_NOTIFICATION}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
 
@@ -16,4 +16,4 @@ spring:
 
 logging:
   level:
-    com.reynan.paymentservice: DEBUG
+    com.reynan.notificationservice: DEBUG
