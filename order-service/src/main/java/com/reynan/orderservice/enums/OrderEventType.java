@@ -1,0 +1,12 @@
+package com.reynan.orderservice.enums;
+
+public enum OrderEventType {
+    ORDER_CREATED,
+    PAYMENT_REQUESTED,
+    PAYMENT_APPROVED,
+    PAYMENT_REJECTED,
+    INVENTORY_RESERVED,
+    INVENTORY_UNAVAILABLE,
+    ORDER_CONFIRMED,
+    ORDER_CANCELLED
+}

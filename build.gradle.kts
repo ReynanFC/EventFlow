@@ -43,7 +43,6 @@ subprojects {
 
         // --- DevTools & Docker Compose ---
         add("developmentOnly", "org.springframework.boot:spring-boot-devtools")
-        add("developmentOnly", "org.springframework.boot:spring-boot-docker-compose")
 
         // --- Testes ---
         add("testImplementation", "org.springframework.boot:spring-boot-starter-test")
