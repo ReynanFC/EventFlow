@@ -33,6 +33,9 @@ subprojects {
         add("implementation", "org.springframework.boot:spring-boot-starter-data-jpa")
         add("testImplementation", "org.springframework.boot:spring-boot-starter-data-jpa-test")
 
+        // --- Validation ---
+        add("implementation", "org.springframework.boot:spring-boot-starter-validation")
+
         // --- Flyway ---
         add("implementation", "org.springframework.boot:spring-boot-starter-flyway")
         add("implementation", "org.flywaydb:flyway-database-postgresql")
