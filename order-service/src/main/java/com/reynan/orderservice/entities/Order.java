@@ -31,11 +31,12 @@ public class Order implements Serializable {
 
     @Enumerated(EnumType.STRING)
     @JdbcTypeCode(SqlTypes.NAMED_ENUM)
-    @Column(name = "status")
+    @Column(name = "status", nullable = false)
     private OrderStatus orderStatus;
 
     private String cancelReason;
 
+    @Column(nullable = false)
     private BigDecimal totalAmount;
 
     @CreationTimestamp
