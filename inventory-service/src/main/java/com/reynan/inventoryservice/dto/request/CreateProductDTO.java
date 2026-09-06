@@ -16,6 +16,6 @@ public record CreateProductDTO(
         BigDecimal price
 ) {
         public CreateProductDTO {
-            name = name.trim();
+            name = (name == null) ? null : name.trim();
         }
 }
