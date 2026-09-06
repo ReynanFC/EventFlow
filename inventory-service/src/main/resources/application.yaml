@@ -5,11 +5,16 @@ spring:
   application:
     name: inventory-service
 
+  data:
+    web:
+      pageable:
+        page-serialization-mode: via_dto
+
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: ${DB_INVENTORY}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    url: ${DB_INVENTORY:jdbc:postgresql://localhost:5432/eventflow_inventory}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
 
   jpa:
     hibernate:
