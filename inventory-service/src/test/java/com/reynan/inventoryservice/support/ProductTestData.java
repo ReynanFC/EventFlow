@@ -34,7 +34,8 @@ public final class ProductTestData {
                 ThreadLocalRandom.current().nextLong(1, Long.MAX_VALUE),
                 request.name(),
                 request.price(),
-                LocalDateTime.now()
+                LocalDateTime.now(),
+                null
         );
     }
 

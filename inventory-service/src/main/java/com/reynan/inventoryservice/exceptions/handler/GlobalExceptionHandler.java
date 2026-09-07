@@ -1,6 +1,7 @@
 package com.reynan.inventoryservice.exceptions.handler;
 
 import com.reynan.inventoryservice.exceptions.DuplicateResourceException;
+import com.reynan.inventoryservice.exceptions.InsufficientStockException;
 import com.reynan.inventoryservice.exceptions.ResourceNotFoundException;
 import com.reynan.inventoryservice.exceptions.model.StandardError;
 import com.reynan.inventoryservice.exceptions.model.ValidationError;
@@ -81,6 +82,19 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ValidationError(Instant.now(), errors, request.getRequestURI(), traceId));
+    }
+
+    @ExceptionHandler(InsufficientStockException.class)
+    public ResponseEntity<StandardError> handleInsufficientStockException(
+            Exception exception,
+            HttpServletRequest request
+    ) {
+        UUID traceId = UUID.randomUUID();
+        log.warn("[TraceID: {}] Insufficient stock at path {}: {}", traceId, request.getRequestURI(), exception.getMessage());
+
+        return ResponseEntity
+                .status(getStatus(exception))
+                .body(buildError(exception.getMessage(), request, traceId));
     }
 
     private StandardError buildError(

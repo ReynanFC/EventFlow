@@ -46,7 +46,20 @@ public class Inventory implements Serializable {
     public Long getId() { return id; }
     public Product getProduct() { return product; }
     public int getQuantity() { return quantity; }
-    public void setQuantity(int quantity) { this.quantity = quantity; }
+
+    public void addToInventory(int quantity) {
+        this.quantity += quantity;
+    }
+
+    public boolean removeFromInventory(int quantity) {
+
+        if (this.quantity < quantity) return false;
+
+        this.quantity -= quantity;
+
+        return true;
+    }
+
     public LocalDateTime getUpdatedAt() { return updatedAt; }
 
     @Override

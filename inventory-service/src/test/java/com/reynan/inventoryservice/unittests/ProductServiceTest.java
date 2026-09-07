@@ -2,6 +2,9 @@ package com.reynan.inventoryservice.unittests;
 
 import com.reynan.inventoryservice.dto.request.CreateProductDTO;
 import com.reynan.inventoryservice.dto.response.ResponseProductDTO;
+import com.reynan.inventoryservice.dto.response.ResponseInventoryDTO;
+import com.reynan.inventoryservice.entities.Inventory;
+import com.reynan.inventoryservice.mapper.impl.ProductMapperImpl;
 import com.reynan.inventoryservice.entities.Product;
 import com.reynan.inventoryservice.mapper.contract.ProductMapper;
 import com.reynan.inventoryservice.repository.ProductRepository;
@@ -89,6 +92,29 @@ public class ProductServiceTest {
     @Nested
     @DisplayName("Find All Products Tests")
     class FindAllProductsTests {
+
+        @Test
+        @DisplayName("Should include inventory in product response when it exists")
+        void shouldIncludeInventoryInProductResponse() {
+            Product product = org.mockito.Mockito.mock(Product.class);
+            Inventory inventory = org.mockito.Mockito.mock(Inventory.class);
+            java.time.LocalDateTime createdAt = java.time.LocalDateTime.now();
+            java.time.LocalDateTime updatedAt = java.time.LocalDateTime.now();
+
+            when(product.getId()).thenReturn(1L);
+            when(product.getName()).thenReturn("Notebook");
+            when(product.getPrice()).thenReturn(new java.math.BigDecimal("1999.90"));
+            when(product.getCreatedAt()).thenReturn(createdAt);
+            when(product.getInventory()).thenReturn(inventory);
+            when(inventory.getId()).thenReturn(2L);
+            when(inventory.getQuantity()).thenReturn(12);
+            when(inventory.getUpdatedAt()).thenReturn(updatedAt);
+
+            ResponseProductDTO result = new ProductMapperImpl().toResponseProductDTO(product);
+
+            assertThat(result.inventory())
+                    .isEqualTo(new ResponseInventoryDTO(2L, 12, updatedAt));
+        }
 
         @Test
         @DisplayName("Should return paged list of products")

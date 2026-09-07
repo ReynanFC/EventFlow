@@ -40,9 +40,10 @@ public interface ProductControllerDocs {
 
     @Operation(
             summary = "List products",
-            description = "Returns products in pages. Use page, size and sort query parameters to control pagination."
+            description = "Returns products with their inventory, in pages. Use page, size and sort query parameters to control pagination."
     )
-    @ApiResponse(responseCode = "200", description = "Page of products returned successfully")
+    @ApiResponse(responseCode = "200", description = "Page of products, including inventory when it exists, returned successfully",
+            content = @Content(schema = @Schema(implementation = ResponseProductDTO.class)))
     ResponseEntity<Page<ResponseProductDTO>> findAllProducts(@ParameterObject Pageable pageable);
 
     @Operation(summary = "Find a product by name", description = "Returns the product whose name exactly matches the supplied value.")

@@ -7,5 +7,6 @@ public record ResponseProductDTO(
         Long id,
         String name,
         BigDecimal price,
-        LocalDateTime createdAt
+        LocalDateTime createdAt,
+        ResponseInventoryDTO inventory
 ) {}

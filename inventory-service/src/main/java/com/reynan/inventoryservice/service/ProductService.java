@@ -42,6 +42,7 @@ public class ProductService {
         return productMapper.toResponseProductDTO(product);
     }
 
+    @Transactional(readOnly = true)
     public Page<ResponseProductDTO> findAllProducts(Pageable pageable) {
         log.debug("Listing products: page={}, size={}, sort={}",
                 pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort());
