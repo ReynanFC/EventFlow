@@ -30,15 +30,6 @@ public class InventoryService {
         this.mapper = inventoryMapper;
     }
 
-    @Transactional(readOnly = true)
-    public ResponseInventoryDTO findInventory(Long productId) {
-
-        Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
-
-        return mapper.toResponseInventoryDTO(product.getInventory());
-    }
-
     @Transactional
     public ResponseInventoryDTO createInventory(CreateInventoryDTO req) {
         log.info("Initiating inventory creation for product ID: {}", req.productId());
@@ -109,7 +100,7 @@ public class InventoryService {
         return productRepository.findById(productId)
                 .orElseThrow(() -> {
                     log.warn("Product lookup failed: ID {} not found", productId);
-                    return new ResourceNotFoundException("Product not found");
+                    return new ResourceNotFoundException("Product not found by ID: " + productId);
                 });
     }
 }

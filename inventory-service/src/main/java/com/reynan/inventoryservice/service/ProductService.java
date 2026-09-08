@@ -51,6 +51,7 @@ public class ProductService {
                 .map(productMapper::toResponseProductDTO);
     }
 
+    @Transactional(readOnly = true)
     public ResponseProductDTO findByName(String name) {
         log.debug("Searching product by name={}", name);
 

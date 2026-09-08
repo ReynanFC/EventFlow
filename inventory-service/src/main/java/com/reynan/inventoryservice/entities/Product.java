@@ -50,6 +50,9 @@ public class Product implements Serializable {
     public BigDecimal getPrice() { return price; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public Inventory getInventory() { return inventory; }
+    public void setInventory(Inventory inventory) {
+        this.inventory = inventory;
+    }
 
     @Override
     public boolean equals(Object object) {

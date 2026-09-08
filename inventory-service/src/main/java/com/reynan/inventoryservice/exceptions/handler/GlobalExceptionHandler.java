@@ -2,6 +2,7 @@ package com.reynan.inventoryservice.exceptions.handler;
 
 import com.reynan.inventoryservice.exceptions.DuplicateResourceException;
 import com.reynan.inventoryservice.exceptions.InsufficientStockException;
+import com.reynan.inventoryservice.exceptions.ResourceAlreadyExistsException;
 import com.reynan.inventoryservice.exceptions.ResourceNotFoundException;
 import com.reynan.inventoryservice.exceptions.model.StandardError;
 import com.reynan.inventoryservice.exceptions.model.ValidationError;
@@ -52,9 +53,9 @@ public class GlobalExceptionHandler {
                 .body(buildError(exception.getMessage(), request, traceId));
     }
 
-    @ExceptionHandler(DuplicateResourceException.class)
-    public ResponseEntity<StandardError> handleDuplicateResourceException(
-            DuplicateResourceException exception,
+    @ExceptionHandler({DuplicateResourceException.class, ResourceAlreadyExistsException.class})
+    public ResponseEntity<StandardError> handleConflictException(
+            RuntimeException exception,
             HttpServletRequest request
     ) {
         UUID traceId = UUID.randomUUID();

@@ -2,6 +2,7 @@ package com.reynan.inventoryservice.support;
 
 import com.reynan.inventoryservice.dto.request.CreateProductDTO;
 import com.reynan.inventoryservice.dto.response.ResponseProductDTO;
+import com.reynan.inventoryservice.entities.Product;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -20,6 +21,12 @@ public final class ProductTestData {
 
     public static CreateProductDTO validCreateProductDTO() {
         return new CreateProductDTO(PRODUCT_NAME, PRODUCT_PRICE);
+    }
+
+    public static Product validCreateProduct() {
+        CreateProductDTO request = validCreateProductDTO();
+
+        return new Product(request.name(), request.price());
     }
 
     public static CreateProductDTO randomCreateProductDTO() {
